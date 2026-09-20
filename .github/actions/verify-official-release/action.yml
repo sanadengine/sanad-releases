@@ -1,0 +1,55 @@
+name: Verify official Sanad release
+description: >-
+  Download the official release-artifact-manifest for the requested version,
+  verify its Ed25519 signature against the COMMITTED official key, and read
+  its sourceCommit. Checkout jobs bind the GitLab tag to that commit.
+  This action must run before
+  any step that exposes a signing credential; it carries no secrets itself.
+inputs:
+  version:
+    description: Official Sanad release version, without the leading v
+    required: true
+  release-download-base:
+    description: HTTPS directory containing this version's signed official release assets
+    required: true
+outputs:
+  source-commit:
+    description: Verified 40-char commit SHA the official release was built from
+    value: ${{ steps.verify.outputs.source-commit }}
+  manifest-path:
+    description: Path to the verified official manifest JSON
+    value: ${{ steps.verify.outputs.manifest-path }}
+runs:
+  using: composite
+  steps:
+    - id: verify
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        SANAD_RELEASE_DOWNLOAD_BASE: ${{ inputs.release-download-base }}
+      run: |
+        set -euo pipefail
+        base="${SANAD_RELEASE_DOWNLOAD_BASE%/}"
+        if [[ ! "$base" =~ ^https://[^[:space:]]+$ ]]; then
+          echo "::error::release-download-base must be an HTTPS asset directory"
+          exit 1
+        fi
+        dir="${RUNNER_TEMP}/official-manifest"
+        mkdir -p "$dir"
+        curl -fsSL --retry 3 --retry-delay 5 \
+          -o "$dir/release-artifact-manifest.json" \
+          "$base/release-artifact-manifest.json"
+        curl -fsSL --retry 3 --retry-delay 5 \
+          -o "$dir/release-artifact-manifest.json.ed25519" \
+          "$base/release-artifact-manifest.json.ed25519"
+
+        source_commit="$(node "${GITHUB_WORKSPACE}/scripts/verify-manifest.mjs" verify \
+          --manifest "$dir/release-artifact-manifest.json" \
+          --signature "$dir/release-artifact-manifest.json.ed25519" \
+          --key "${GITHUB_WORKSPACE}/official-release-key.pub" \
+          --repository "manageengine-group/sanad" \
+          --release "v${VERSION}")"
+
+        echo "source-commit=${source_commit}" >> "$GITHUB_OUTPUT"
+        echo "manifest-path=${dir}/release-artifact-manifest.json" >> "$GITHUB_OUTPUT"
+        echo "Verified official manifest for v${VERSION}; sourceCommit=${source_commit}"
