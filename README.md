@@ -10,6 +10,14 @@ the running Sanad instance until a complete, signed release and its manifest
 are available here. The release workflow below requires an upstream signed
 asset bundle and platform signing credentials before a production run.
 
+The release-manifest signing key is configured as a GitHub Actions secret.
+Its private key is backed up outside this repository on the release operator's
+PC. The outstanding inputs are a signed source asset bundle, a read-only GitLab
+source credential for the workflow, Windows code-signing access, and Apple
+Developer ID signing/notarization credentials for macOS assets. The signed
+source bundle must include the viewer and helper packages before this workflow
+can mirror them. A successful script lint or dry run is not a published release.
+
 When that release is ready, set `BINARY_GITHUB_REPOSITORY=sanadengine/sanad-releases`
 and use the public key printed by the signing workflow as
 `RELEASE_ARTIFACT_MANIFEST_PUBLIC_KEYS`. Never use the official key in

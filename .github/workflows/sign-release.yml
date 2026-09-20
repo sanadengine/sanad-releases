@@ -2,7 +2,7 @@ name: Sign Sanad Release
 
 # Adapted from the Sanad signing jobs; official source is manageengine-group/sanad on GitLab.
 # Maintenance stance: this is a COPY, not a reusable workflow — your secrets never
-# flow through LanternOps workflow definitions, and refactors of the product repo's
+# flow through upstream workflow definitions, and refactors of the product repo's
 # release.yml cannot break your runs. Version-sensitive build logic lives in the
 # product repo and is checked out at the manifest-verified sourceCommit.
 #
