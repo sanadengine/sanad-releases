@@ -1,5 +1,20 @@
 # sanad-selfhost-signing
 
+## Current deployment status
+
+The Sanad source is maintained on [GitLab](https://gitlab.com/manageengine-group/sanad)
+and mirrored privately at [sanadengine/sanad](https://github.com/sanadengine/sanad).
+This public repository is the intended home for downloadable agent and viewer
+releases. **No release has been published yet.** Keep `BINARY_SOURCE=local` in
+the running Sanad instance until a complete, signed release and its manifest
+are available here. The release workflow below requires an upstream signed
+asset bundle and platform signing credentials before a production run.
+
+When that release is ready, set `BINARY_GITHUB_REPOSITORY=sanadengine/sanad-releases`
+and use the public key printed by the signing workflow as
+`RELEASE_ARTIFACT_MANIFEST_PUBLIC_KEYS`. Never use the official key in
+`official-release-key.pub` for releases signed by this repository.
+
 Sign official [Sanad RMM](https://gitlab.com/manageengine-group/sanad) agent
 releases with **your own** code-signing certificates — no fork, no Windows or
 Mac hardware, no per-download signing. One workflow run per Sanad release

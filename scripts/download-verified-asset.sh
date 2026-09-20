@@ -14,7 +14,7 @@ POLICY="${4:---forbid-signing-input}"
 MANIFEST="${OFFICIAL_MANIFEST_PATH:?OFFICIAL_MANIFEST_PATH not set — run verify-official-release first}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-base="${SANAD_RELEASE_DOWNLOAD_BASE:?Set SANAD_RELEASE_DOWNLOAD_BASE to this version's HTTPS asset directory}"
+base="${SANAD_RELEASE_DOWNLOAD_BASE:?Set SANAD_RELEASE_DOWNLOAD_BASE to the HTTPS asset directory for this version}"
 [[ "$base" =~ ^https://[^[:space:]]+$ ]] || { echo 'SANAD_RELEASE_DOWNLOAD_BASE must be HTTPS' >&2; exit 1; }
 [[ "$ASSET" =~ ^[A-Za-z0-9._-]+$ ]] || { echo 'Invalid asset name' >&2; exit 1; }
 url="${base%/}/${ASSET}"
