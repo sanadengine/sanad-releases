@@ -52,14 +52,15 @@ jobs:
           echo "official key ok: $raw"
 
   # Full end-to-end dry run against a real official release (no secrets).
-  # Gated on the DRY_RUN_VERSION repository variable: it can only pass against
+  # Gated on the DRY_RUN_VERSION and DRY_RUN_RELEASE_DOWNLOAD_BASE repository
+  # variables: it can only pass against
   # an official Sanad release that publishes the unsigned signing-input asset
   # set. Set the variable (Settings -> Secrets and variables -> Actions ->
   # Variables) to e.g. 0.106.0 to enable.
   dry-run:
     name: Dry-run sign workflow
     needs: [lint]
-    if: vars.DRY_RUN_VERSION != ''
+    if: vars.DRY_RUN_VERSION != '' && vars.DRY_RUN_RELEASE_DOWNLOAD_BASE != ''
     # A called workflow's jobs cannot hold more permission than the calling job
     # grants. sign-release.yml declares `contents: write` (publish) and
     # `id-token: write` (Azure OIDC); without them here the call is rejected
@@ -71,6 +72,7 @@ jobs:
     uses: ./.github/workflows/sign-release.yml
     with:
       version: ${{ vars.DRY_RUN_VERSION }}
+      release-download-base: ${{ vars.DRY_RUN_RELEASE_DOWNLOAD_BASE }}
       signing-mode: azure-artifact-signing
       platforms: all
       dry-run: true
