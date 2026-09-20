@@ -10,7 +10,9 @@ the running Sanad instance until a complete, signed release and its manifest
 are available here. The release workflow below requires an upstream signed
 asset bundle and platform signing credentials before a production run.
 
-The release-manifest signing key is configured as a GitHub Actions secret.
+The release-manifest signing key is configured as a GitHub Actions secret in
+the `signing` environment. The environment requires approval from the
+`sanadengine` account before a signing job can access it.
 Its private key is stored outside this repository on the release operator's
 PC. The outstanding inputs are a signed source asset bundle, a read-only GitLab
 source credential for the workflow, Windows code-signing access, and Apple
@@ -75,14 +77,14 @@ release), so fleet trust is unchanged.
 2. Set the `SANAD_GITLAB_READ_TOKEN` GitHub Actions secret to a GitLab token
    with read access to `manageengine-group/sanad` when that source repository
    is private. The workflow checks out the exact commit in the signed manifest.
-3. Run `./scripts/generate-manifest-key.sh` locally and follow its output:
-   store the private key as the `RELEASE_MANIFEST_ED25519_PRIVATE_KEY`
-   secret; keep the printed env block for step 6.
+3. The `RELEASE_MANIFEST_ED25519_PRIVATE_KEY` key is already configured in
+   the `signing` environment for this repository. For a new deployment,
+   generate its own key with `./scripts/generate-manifest-key.sh` and store
+   the private key in that environment.
 4. Add the platform secrets for your signing mode (tables below).
-5. **Recommended:** create a GitHub Environment named `signing`
-   (Settings → Environments), move the secrets there, and add yourself as a
-   required reviewer — every signing run then needs an explicit approval.
-   The workflow's signing jobs reference the `signing` environment.
+5. The `signing` GitHub Environment is already configured with a required
+   reviewer. Add platform signing credentials there when they become
+   available; every signing run then needs an explicit approval.
    Dry-run executions also run in the `signing` environment, so with required
    reviewers even secret-free dry runs wait for your approval — this is
    expected and is a useful smoke test of the approval gate.
