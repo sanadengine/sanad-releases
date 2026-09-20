@@ -11,7 +11,7 @@ are available here. The release workflow below requires an upstream signed
 asset bundle and platform signing credentials before a production run.
 
 The release-manifest signing key is configured as a GitHub Actions secret.
-Its private key is backed up outside this repository on the release operator's
+Its private key is stored outside this repository on the release operator's
 PC. The outstanding inputs are a signed source asset bundle, a read-only GitLab
 source credential for the workflow, Windows code-signing access, and Apple
 Developer ID signing/notarization credentials for macOS assets. The signed
